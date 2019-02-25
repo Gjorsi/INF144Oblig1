@@ -19,7 +19,7 @@ public class Main {
             if (input == "q")
                 break;
             
-            m.generateOrder0(Integer.parseInt(input));
+            m.generateOrder2(Integer.parseInt(input));
         }
         
     }

@@ -93,11 +93,11 @@ public class Markov {
         }
         
         //print test
-        for (int i=0; i<DICT_SIZE; i++) {
-            for (int j=0; j<DICT_SIZE; j++) {
-                System.out.println("P(" + chars[j] + " | " + chars[i] + ") = " + currentOM[i][j]);
-            }
-        }
+//        for (int i=0; i<DICT_SIZE; i++) {
+//            for (int j=0; j<DICT_SIZE; j++) {
+//                System.out.println("P(" + chars[j] + " | " + chars[i] + ") = " + currentOM[i][j]);
+//            }
+//        }
     }
     
     private void analyzeOrder2() {
@@ -134,13 +134,13 @@ public class Markov {
         }
         
         //print test
-        for (int i=0; i<DICT_SIZE; i++) {
-            for (int j=0; j<DICT_SIZE; j++) {
-                for (int k=0; k<DICT_SIZE ; k++) {
-                    System.out.println("P(" + chars[k] + " | " + chars[i] + "" + chars[j] + ") = " + currentOM[i][j][k]);
-                }
-            }
-        }
+//        for (int i=0; i<DICT_SIZE; i++) {
+//            for (int j=0; j<DICT_SIZE; j++) {
+//                for (int k=0; k<DICT_SIZE ; k++) {
+//                    System.out.println("P(" + chars[k] + " | " + chars[i] + "" + chars[j] + ") = " + currentOM[i][j][k]);
+//                }
+//            }
+//        }
     }
     
     private void analyzeOrder3() {
@@ -192,12 +192,17 @@ public class Markov {
             }
         }
         
-        for (int i=0; i<30; i++) {
-            matrix0[i] /= sourceText.length;
+        int sum = 0;
+        for (int i=0; i<DICT_SIZE; i++) {
+            sum += matrix0[i];
+        }
+        
+        for (int i=0; i<DICT_SIZE; i++) {
+            matrix0[i] /= sum;
         }
         
         //print test
-//        for (int i=0; i<30; i++) {
+//        for (int i=0; i<DICT_SIZE; i++) {
 //            System.out.println(chars[i] + ": " + matrix0[i]);
 //        }
         
@@ -209,17 +214,17 @@ public class Markov {
         int x;
         StringBuilder sb = new StringBuilder(length);
         
-        for (int i=0; i<30; i++) {
-            sum += matrix0[i];
-        }
-        System.out.println("sum" + sum); //sum should be ~1
+//        for (int i=0; i<30; i++) {
+//            sum += matrix0[i];
+//        }
+//        System.out.println("sum" + sum); //sum should be ~1
         
         for (int i=0; i<length; i++) {
             random = r.nextDouble();
             sum = 0.0;
             x = 0;
             
-            System.out.println("random" + random);
+//            System.out.println("random" + random);
             
             
             
@@ -229,6 +234,91 @@ public class Markov {
             
             sb.append(chars[x-1]);
         }
+        
+        System.out.println(sb.toString());
+    }
+    
+    public void generateOrder1(int length) {
+        analyzeOrder0();
+        analyzeOrder1();
+        Double random, sum = 0.0;
+        int prevChar;
+        int x;
+        StringBuilder sb = new StringBuilder(length);
+        
+        //first char
+        x = 0;
+        random = r.nextDouble();
+        while(random>sum) {
+            sum+=matrix0[x++];
+        }
+        sb.append(chars[x-1]);
+        prevChar = x-1;
+        
+        //rest of text
+        for (int i=1; i<length; i++) {
+            random = r.nextDouble();
+            sum = 0.0;
+            x = 0;
+            
+            
+            while(random>sum) {
+                sum+=trMatrix1[prevChar][x++];
+            }
+            
+            sb.append(chars[x-1]);
+            prevChar = x-1;
+        }
+        
+        System.out.println(sb.toString());
+    }
+    
+    public void generateOrder2(int length) {
+        analyzeOrder0();
+        analyzeOrder1();
+        analyzeOrder2();
+        Double random, sum = 0.0;
+        int prevChar1;
+        int prevChar2;
+        int x;
+        StringBuilder sb = new StringBuilder(length);
+        
+        //first char
+        x = 0;
+        random = r.nextDouble();
+        while(random>sum) {
+            sum+=matrix0[x++];
+        }
+        sb.append(chars[x-1]);
+        prevChar2 = x-1;
+        
+        //second char
+        x = 0;
+        sum = 0.0;
+        random = r.nextDouble();
+        while(random>sum) {
+            sum+=trMatrix1[prevChar2][x++];
+        }
+        sb.append(chars[x-1]);
+        prevChar1 = x-1;
+        
+        //rest of text
+        for (int i=1; i<length; i++) {
+            random = r.nextDouble();
+            sum = 0.0;
+            x = 0;
+            
+            
+            while(random>sum) {
+                sum+=trMatrix2[prevChar2][prevChar1][x++];
+            }
+            
+            sb.append(chars[x-1]);
+            prevChar2 = prevChar1;
+            prevChar1 = x-1;
+        }
+        
+        System.out.println(sb.toString());
     }
     
 }
