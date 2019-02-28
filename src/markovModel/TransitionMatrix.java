@@ -12,25 +12,49 @@ public class TransitionMatrix {
         r = new Random();
     }
     
+    /**
+     * Check to see if the transition matrix has a row for the given prefix
+     * 
+     * @param prefix
+     * @return true if the row exists
+     */
     public boolean exists(String prefix) {
         return matrix.containsKey(prefix);
     }
     
+    /**
+     * Add a new row for the given prefix and the suffix as a possible transition
+     * 
+     * @param prefix
+     * @param suffix
+     */
     public void addPrefix(String prefix, char suffix) {
         matrix.put(prefix, new MatrixRow(suffix));
     }
     
-    public void addOccurence(String prefix, char suffix) {
+    /**
+     * Add an occurrence of the given suffix to the row of the prefix in the transition matrix
+     * 
+     * @param prefix
+     * @param suffix
+     */
+    public void addOccurrence(String prefix, char suffix) {
         matrix.get(prefix).addOccurence(suffix);
     }
     
+    /**
+     * Get a random character based on the probability statistics of the given prefix
+     * 
+     * @param prefix
+     * @return the generated character
+     */
     public char getRandomized(String prefix) {
-        int random = r.nextInt(matrix.get(prefix).freqTotal+1); //a random number limited by the total of occurences of given prefix
+        int random = r.nextInt(matrix.get(prefix).freqTotal); //a random number limited by the total of occurrences of given prefix
         int sum = 0;
         
         for (Character c : matrix.get(prefix).freq.keySet()) {
             sum += matrix.get(prefix).freq.get(c);
-            if (sum >= random) {
+            if (sum > random) {
                 return c;
             }
         }
@@ -64,12 +88,5 @@ public class TransitionMatrix {
         System.out.println("all stored prefixes:");
         for(String s : matrix.keySet())
             System.out.println("prefix: " + s);
-        
-        for(char c : matrix.get(" ").freq.keySet())
-            System.out.println("suffixes to space: " + c);
-            
-        
-        for(char c : matrix.get("d").freq.keySet())
-            System.out.println("suffixes to d: " + c);
     }
 }

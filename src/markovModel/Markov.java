@@ -22,6 +22,8 @@ public class Markov {
     private TransitionMatrix trMatrix;
     
     public Markov(File source) {
+        
+        //read file into character array sourceText
         BufferedReader br;
         try {
             br = new BufferedReader(new FileReader(source));
@@ -36,7 +38,7 @@ public class Markov {
             e.printStackTrace();
         }
         
-        //initialize
+        //Initialise
         r = new Random();
         alphabet = new HashSet<Character>();
         for (int i=0; i<DICT_SIZE; i++) {
@@ -50,19 +52,16 @@ public class Markov {
         trMatrix = new TransitionMatrix();
         
     }
-    
+
     private void analyzeOrder0 () {
+        int sum = 0;
         for(int i=0; i<sourceText.length; i++) {
             if (alphabet.contains(sourceText[i])) {
                 matrix0[charPos.get(sourceText[i])]++;
+                sum++;
             }
         }
-        
-        int sum = 0;
-        for (int i=0; i<DICT_SIZE; i++) {
-            sum += matrix0[i];
-        }
-        
+
         for (int i=0; i<DICT_SIZE; i++) {
             matrix0[i] /= sum;
         }
@@ -92,18 +91,18 @@ public class Markov {
     private void analyzeOrder(int order) {
         String pfx;
         
-        prefix: for (int i=0+order; i<sourceText.length; i++) {
+        nextPfx: for (int i=0+order; i<sourceText.length; i++) {
             if (!alphabet.contains(sourceText[i]))
                 continue;
             pfx = "";
             //look at current prefix, cancel if any of the characters in this one is not in the alphabet
             for (int j=order; j>=1; j--) {
                 if (!alphabet.contains(sourceText[i-j]))
-                    continue prefix;
+                    continue nextPfx;
                 pfx += sourceText[i-j];
             }
             if (trMatrix.exists(pfx))
-                trMatrix.addOccurence(pfx, sourceText[i]);
+                trMatrix.addOccurrence(pfx, sourceText[i]);
             else
                 trMatrix.addPrefix(pfx, sourceText[i]);
         }
@@ -133,7 +132,7 @@ public class Markov {
         }
         sb.append(chars[x-1]);
         
-        //2nd and 3rd characters for higher orders
+        //2nd, 3rd etc characters for higher orders
         for (int i=1; i<order; i++) {
             sb.append(trMatrix.getRandomized(sb.substring(sb.length()-i)));
         }

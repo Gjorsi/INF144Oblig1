@@ -17,7 +17,7 @@ public class Main {
         
         while(true) {
             System.out.println("q = quit\n" 
-                    + "enter two space-separated integers;\n the desired order followed by length of generated text.\n");
+                    + "enter two space-separated integers;\nthe desired order followed by length of generated text.\n");
             String input = sc.nextLine();
             if (input.equals("q")) {
                 sc.close();
