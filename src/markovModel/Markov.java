@@ -17,7 +17,7 @@ public class Markov {
             'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'æ', 'ø', 'å', ' '};
     private HashSet<Character> alphabet;
     private Character[] sourceText = new Character[10000];
-    private Double[] matrix0 = new Double[DICT_SIZE];
+    private double[] matrix0 = new double[DICT_SIZE];
     private Random r;
     private TransitionMatrix trMatrix;
     
@@ -52,19 +52,104 @@ public class Markov {
         trMatrix = new TransitionMatrix();
         
     }
+    
+    public void entropy0() {
+        analyzeOrder0();
+        double sum = 0.0;
+        
+        for (int i=0; i<DICT_SIZE ; i++) {
+            if (matrix0[i] != 0.0)
+                sum += matrix0[i]*log2(1.0/matrix0[i]);
+        }
+        
+        System.out.println("Entropy of zeroth order: " + sum);
+    }
+    
+    public double log2 (double x) {
+        return (Math.log(x)/Math.log(2));
+    }
 
     public void entropy1() {
         analyzeOrder(1);
         
-        int[][] piMatrix1 = new int[DICT_SIZE][DICT_SIZE];
+        double[][] piMatrix1 = new double[DICT_SIZE][DICT_SIZE];
         
         for (int i=0; i<DICT_SIZE; i++) {
-            for (int j=0; j<DICT_SIZE; j++) {
-                piMatrix1[i][j] = trMatrix.
+            
+            if (trMatrix.exists(Character.toString(chars[i]))) {
+                for (int j=0; j<DICT_SIZE; j++) {
+                    if (trMatrix.containsSuffix(Character.toString(chars[i]), chars[j])) {
+                        piMatrix1[i][j] = trMatrix.getProb(Character.toString(chars[i]), chars[j]);
+                    } else {
+                        piMatrix1[i][j] = 0.0;
+                    }
+                }
+            } else {
+                for (int j=0; j<DICT_SIZE ; j++) {
+                    piMatrix1[i][j] = 0.0;
+                }
             }
+        }
+        
+        for (int i=0; i<DICT_SIZE ; i++) {
+            double rowSum = 0.0;
+            for (int j=0; j<DICT_SIZE ; j++) {
+                System.out.printf("%5.2f ", piMatrix1[i][j]);
+                rowSum += piMatrix1[i][j];
+            }
+            System.out.println("row sum: " + rowSum);
+        }
+        
+        System.out.println();  
+        System.out.println();
+        
+        piMatrix1 = multiplyMatrix(piMatrix1);
+        
+        for (int i=0; i<DICT_SIZE ; i++) {
+            for (int j=0; j<DICT_SIZE ; j++) {
+                System.out.printf("%5.2f ", piMatrix1[i][j]);
+            }
+            System.out.println();
         }
     }
     
+    private double[][] multiplyMatrix(double[][] m) {
+        int n = 5;
+        double[][] temp = new double[m.length][m[0].length];
+        
+
+        
+        for (int i=0; i<n ; i++) {
+            
+            for (int j=0; j<m.length ; j++) {
+                for (int k=0; k<m.length ; k++) {
+                    temp[j][k] = 0.0;
+                }
+            }
+            
+            for (int j=0; j<DICT_SIZE ; j++) {
+                for (int k=0; k<DICT_SIZE ; k++) {
+                    System.out.printf("%5.3f ", m[j][k]);
+                }
+                System.out.println();
+            }
+            
+            for (int j=0; j<m.length ; j++) {
+                for (int k=0; k<m[0].length ; k++) {
+                    
+                    for (int o=0; o<m.length ; o++) {
+                        temp[j][k] += m[j][o]*m[o][k];
+                    }
+                    
+                }
+            }
+            
+            m = temp.clone();
+        }
+        
+        return m;
+    }
+
     private void analyzeOrder0 () {
         int sum = 0;
         for(int i=0; i<sourceText.length; i++) {

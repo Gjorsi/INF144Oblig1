@@ -1,6 +1,7 @@
 package markovModel;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 public class TransitionMatrix {
@@ -61,6 +62,20 @@ public class TransitionMatrix {
         
         throw new IllegalStateException("Couldnt find next char, this should not happen");
             
+    }
+    
+    public HashSet<Character> getSuffixes (String prefix) {
+        HashSet<Character> t = new HashSet<>();
+        t.addAll(matrix.get(prefix).freq.keySet());
+        return t;
+    }
+    
+    public boolean containsSuffix (String prefix, char c) {
+        return matrix.get(prefix).freq.containsKey(c);
+    }
+    
+    public double getProb (String suffix, char c) {
+        return (double)matrix.get(suffix).freq.get(c) / matrix.get(suffix).freqTotal;
     }
 
     private class MatrixRow {

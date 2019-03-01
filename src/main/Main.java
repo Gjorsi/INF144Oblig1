@@ -15,6 +15,9 @@ public class Main {
         
         Scanner sc = new Scanner(System.in);
         
+        m.entropy0();
+        m.entropy1();
+        
         while(true) {
             System.out.println("q = quit\n" 
                     + "enter two space-separated integers;\nthe desired order followed by length of generated text.\n");
