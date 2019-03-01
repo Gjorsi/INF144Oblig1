@@ -74,6 +74,7 @@ public class Markov {
         
         double[][] piMatrix1 = new double[DICT_SIZE][DICT_SIZE];
         
+        //store the probability statistics in a n x n matrix
         for (int i=0; i<DICT_SIZE; i++) {
             
             if (trMatrix.exists(Character.toString(chars[i]))) {
@@ -91,61 +92,65 @@ public class Markov {
             }
         }
         
-        for (int i=0; i<DICT_SIZE ; i++) {
-            double rowSum = 0.0;
-            for (int j=0; j<DICT_SIZE ; j++) {
-                System.out.printf("%5.2f ", piMatrix1[i][j]);
-                rowSum += piMatrix1[i][j];
-            }
-            System.out.println("row sum: " + rowSum);
+        // iterating 50 times as an approximation of n -> infinity
+        for (int i=0; i<50 ; i++) {
+            piMatrix1 = multiplyMatrix(piMatrix1);
         }
         
-        System.out.println();  
-        System.out.println();
+//        for (int i=0; i<DICT_SIZE ; i++) {
+//            for (int j=0; j<DICT_SIZE ; j++) {
+//                System.out.printf("%5.3f ", piMatrix1[i][j]);
+//            }
+//            System.out.println();
+//        }
         
-        piMatrix1 = multiplyMatrix(piMatrix1);
-        
+        double entropy = 0.0;
         for (int i=0; i<DICT_SIZE ; i++) {
-            for (int j=0; j<DICT_SIZE ; j++) {
-                System.out.printf("%5.2f ", piMatrix1[i][j]);
-            }
-            System.out.println();
+            if (piMatrix1[0][i] != 0.0)
+                entropy += piMatrix1[0][i]*stateEntropy(i); // the probability of being in state i * the state entropy
         }
+        
+        System.out.println("Entropy of 1st order: " + entropy);
     }
     
+    private double stateEntropy(int i) {
+        double sum = 0.0;
+        
+        for (char c : trMatrix.getSuffixes(Character.toString(chars[i]))) { // for each possible character as suffix to chars[i]
+            double probC = trMatrix.getProb(Character.toString(chars[i]), c); // the probability of getting c as suffix
+            sum += probC*log2(1.0/probC);
+        }
+        return sum;
+    }
+
     private double[][] multiplyMatrix(double[][] m) {
-        int n = 5;
         double[][] temp = new double[m.length][m[0].length];
         
-
-        
-        for (int i=0; i<n ; i++) {
             
-            for (int j=0; j<m.length ; j++) {
-                for (int k=0; k<m.length ; k++) {
-                    temp[j][k] = 0.0;
-                }
+        for (int j=0; j<m.length ; j++) {
+            for (int k=0; k<m.length ; k++) {
+                temp[j][k] = 0.0;
             }
-            
-            for (int j=0; j<DICT_SIZE ; j++) {
-                for (int k=0; k<DICT_SIZE ; k++) {
-                    System.out.printf("%5.3f ", m[j][k]);
-                }
-                System.out.println();
-            }
-            
-            for (int j=0; j<m.length ; j++) {
-                for (int k=0; k<m[0].length ; k++) {
-                    
-                    for (int o=0; o<m.length ; o++) {
-                        temp[j][k] += m[j][o]*m[o][k];
-                    }
-                    
-                }
-            }
-            
-            m = temp.clone();
         }
+        
+//        for (int j=0; j<DICT_SIZE ; j++) {
+//            for (int k=0; k<DICT_SIZE ; k++) {
+//                System.out.printf("%5.3f ", m[j][k]);
+//            }
+//            System.out.println();
+//        }
+        
+        for (int i=0; i<m.length ; i++) {
+            for (int j=0; j<m[0].length ; j++) {
+                
+                for (int k=0; k<m.length ; k++) {
+                    temp[i][j] += m[i][k]*m[k][j];
+                }
+                
+            }
+        }
+        
+        m = temp.clone();
         
         return m;
     }
