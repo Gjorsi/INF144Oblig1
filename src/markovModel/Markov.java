@@ -53,6 +53,18 @@ public class Markov {
         
     }
 
+    public void entropy1() {
+        analyzeOrder(1);
+        
+        int[][] piMatrix1 = new int[DICT_SIZE][DICT_SIZE];
+        
+        for (int i=0; i<DICT_SIZE; i++) {
+            for (int j=0; j<DICT_SIZE; j++) {
+                piMatrix1[i][j] = trMatrix.
+            }
+        }
+    }
+    
     private void analyzeOrder0 () {
         int sum = 0;
         for(int i=0; i<sourceText.length; i++) {
