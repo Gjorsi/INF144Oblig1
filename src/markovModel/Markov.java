@@ -11,18 +11,19 @@ import java.util.Random;
 
 public class Markov {
 
-    private final int DICT_SIZE = 30;
+    private int DICT_SIZE;
     private HashMap<Character, Integer> charPos = new HashMap<>();
-    private char[] chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-            'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'æ', 'ø', 'å', ' '};
+    private char[] chars;
     private HashSet<Character> alphabet;
     private Character[] sourceText = new Character[10000];
-    private double[] matrix0 = new double[DICT_SIZE];
+    private double[] matrix0;
     private Random r;
     private TransitionMatrix trMatrix;
     
-    public Markov(File source) {
-        
+    public Markov(File source, char[] chars, HashSet<Character> alphabet, int dict_size) {
+        this.chars = chars;
+        this.alphabet = alphabet;
+        this.DICT_SIZE = dict_size;
         //read file into character array sourceText
         BufferedReader br;
         try {
@@ -45,6 +46,7 @@ public class Markov {
             charPos.put(chars[i], i); 
             alphabet.add(chars[i]);
         }
+        matrix0 = new double[DICT_SIZE];
         for (int i=0; i<matrix0.length; i++) {
             matrix0[i] = 0.0;
         }
