@@ -11,7 +11,8 @@ public class LZW {
     private int ALPH_SIZE;
     private String text;
     HashSet<Character> alphabet;
-    private BiDirectionalMap dictionary; // the dictionary used for compression and decompression
+    private BiDirectionalMap dictionary; // the dictionary used for compression
+    private BiDirectionalMap decodeDictionary;
     private ArrayList<Integer> compressed; //the output of the compression algorithm
     private HashMap<Integer, Integer> bitCount; //stores the number of outputs with x as bitlength
     private int currentBitLength;
@@ -66,51 +67,60 @@ public class LZW {
             if (dictionary.contains(text.substring(pos, i+1)) == null) { //if current sequence + char at i is not in dictionary
                 compressed.add(dictionary.contains(text.substring(pos, i))); //output current sequence's index
                 dictionary.put(dictionaryIndex++, text.substring(pos, i+1)); //add current sequence + char to dictionary
-                System.out.println("adding sequence '" + text.substring(pos, i+1) + "' to dictionary at index " + (dictionaryIndex-1));
-                if (dictionary.size() >= Math.pow(2.0, currentBitLength)) { // increase bitlength if necessary
+                bitCount.put(currentBitLength, bitCount.get(currentBitLength)+1); // log that an index was added to output of current bitlength
+                if (dictionary.size() > Math.pow(2.0, currentBitLength)) { // increase bitlength if necessary
                     currentBitLength++;
+                    System.out.println("bitlength changed to " + currentBitLength);
                     bitCount.put(currentBitLength, 0);
                 }
-                bitCount.put(currentBitLength, bitCount.get(currentBitLength)+1); // log that an index was added to output of current bitlength
                 pos = i;
             }
         }
         compressed.add(dictionary.contains(text.substring(pos, text.length())));
-        if (dictionary.size() >= Math.pow(2.0, currentBitLength)) {
+        if (dictionary.size() >= Math.pow(2, currentBitLength)) {
             currentBitLength++;
+            System.out.println("bitlength changed to " + currentBitLength);
             bitCount.put(currentBitLength, 0);
         }
         bitCount.put(currentBitLength, bitCount.get(currentBitLength)+1); // log that an index was added to output of current bitlength
     }
     
+    public void decompress() {
+        
+    }
+    
     public void printCompressed() {
         for (int i=0; i<compressed.size(); i++) {
             System.out.print(compressed.get(i) + " ");
+            if (i%10 == 0) System.out.println();
         }
         System.out.println();
     }
     
     public void printCompressionRatio() {
-        System.out.println("initial bit length: " + initialBitLength);
-        System.out.println("text.length: " + text.length());
+//        System.out.println("initial bit length: " + initialBitLength);
+//        System.out.println("current bit length: " + currentBitLength);
+//        System.out.println("text.length: " + text.length());
         int UncompressedLength = text.length()*initialBitLength;
         int compressedLength = 0;
-        for (int i=0; i<bitCount.size(); i++) {
-            if (bitCount.containsKey(i)) {
-                compressedLength += i*bitCount.get(i);
-            }
+//        System.out.println("bitcount size: " + bitCount.size());
+        for (int i : bitCount.keySet()) {
+            compressedLength += i*bitCount.get(i);
+//            System.out.println("Compressed output contains " + bitCount.get(i) + " codes of bit length " + i);
         }
         
         System.out.println("Uncompressed bit-length: " + UncompressedLength);
         System.out.println("Compressed bit-length: " + compressedLength);
         
+        double rate = (double)compressedLength / UncompressedLength;
+        rate = 1-rate;
+        System.out.printf("Compression rate: %.2f%%\n", rate*100);
     }
     
     private int findInitialBitLength() {
         initialBitLength = 1;
-        int x = 1;
-        while (alphabet.size() > Math.pow(initialBitLength, 2)) initialBitLength = (int)Math.pow(2, x++);
-        return initialBitLength;
+        while (alphabet.size() > Math.pow(initialBitLength, 2)) initialBitLength++;
+        return --initialBitLength;
     }
     
     private class BiDirectionalMap {

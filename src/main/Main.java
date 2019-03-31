@@ -12,12 +12,12 @@ import markovModel.Markov;
 
 public class Main {
 
-//    private static char[] chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-//            'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'æ', 'ø', 'å', ' '};
-  private static char[] chars = {'#', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-  'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+    private static char[] chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+            'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'æ', 'ø', 'å', ' '};
+//  private static char[] chars = {'#', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+//  'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
     private static HashSet<Character> alphabet;
-    private final static int DICT_SIZE = 27;
+    private final static int DICT_SIZE = 30;
     private static char[] sourceText;
     
     public static void main(String[] args) throws IOException {
@@ -53,10 +53,11 @@ public class Main {
 //        m.entropy0();
 //        m.entropy1();
         
-        LZW testc = new LZW("tobeornottobeortobeornot#", alphabet, DICT_SIZE);
-        testc.compress();
-        testc.printCompressed();
-        testc.printCompressionRatio();
+        
+        LZW lzw = new LZW(sourceText, alphabet, DICT_SIZE);
+//        LZW lzw = new LZW("tobeornottobeortobeornot#", alphabet, DICT_SIZE);
+        lzw.compress();
+        lzw.printCompressionRatio();
         
 //        while(true) {
 //            System.out.println("q = quit\n" 
