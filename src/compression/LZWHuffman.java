@@ -1,28 +1,27 @@
 package compression;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class LZW {
+public class LZWHuffman {
 
-    private int ALPH_SIZE;
     private String text;
     HashSet<Character> alphabet;
     private BiDirectionalMap dictionary; // the dictionary used for compression
     private BiDirectionalMap decodeDictionary;
-    private ArrayList<Integer> compressed; //the output of the compression algorithm
-    private HashMap<Integer, Integer> bitCount; //stores the number of outputs with x as bitlength
+//    private ArrayList<Integer> compressed; //the output of the compression algorithm
+    private ArrayList<boolean[]> LZWoutput;
     private int currentBitLength;
     private int initialBitLength;
     private int dictionaryIndex;
     
-    public LZW(char[] chars, HashSet<Character> alphabet, int alph_size) {
-        this.ALPH_SIZE = alph_size;
+    public LZWHuffman(char[] chars, HashSet<Character> alphabet, int alph_size) {
         this.alphabet = alphabet;
         dictionary = new BiDirectionalMap();
-        compressed = new ArrayList<>();
-        bitCount = new HashMap<>();
+//        compressed = new ArrayList<>();
+        LZWoutput = new ArrayList<boolean[]>();
         
         StringBuilder sb = new StringBuilder();
         
@@ -32,7 +31,6 @@ public class LZW {
             dictionary.put(dictionaryIndex++, Character.toString(c));
         }
         currentBitLength = findInitialBitLength();
-        bitCount.put(currentBitLength, 0);
         
         for (int i=0; i<chars.length; i++) {
             if (alphabet.contains(chars[i])) sb.append(chars[i]);
@@ -41,13 +39,12 @@ public class LZW {
         text = sb.toString();
     }
     
-    public LZW(String source, HashSet<Character> alphabet, int alph_size) {
-        this.ALPH_SIZE = alph_size;
+    public LZWHuffman(String source, HashSet<Character> alphabet, int alph_size) {
         this.alphabet = alphabet;
         this.text = source;
         dictionary = new BiDirectionalMap();
-        compressed = new ArrayList<>();
-        bitCount = new HashMap<>();
+//        compressed = new ArrayList<>();
+        LZWoutput = new ArrayList<boolean[]>();
         
         dictionaryIndex=0;
         for (char c : alphabet) {
@@ -55,7 +52,6 @@ public class LZW {
             dictionary.put(dictionaryIndex++, Character.toString(c));
         }
         currentBitLength = findInitialBitLength();
-        bitCount.put(currentBitLength, 0);
     }
     
     public void compress() {
@@ -63,34 +59,44 @@ public class LZW {
         
         for (int i=1; i<text.length(); i++) {
             if (dictionary.contains(text.substring(pos, i+1)) == null) { //if current sequence + char at i is not in dictionary
-                compressed.add(dictionary.contains(text.substring(pos, i))); //output current sequence's index
+                addBitBlock(dictionary.contains(text.substring(pos, i))); //output current sequence's index
                 dictionary.put(dictionaryIndex++, text.substring(pos, i+1)); //add current sequence + char to dictionary
-                bitCount.put(currentBitLength, bitCount.get(currentBitLength)+1); // log that an index was added to output of current bitlength
                 if (dictionary.size() > Math.pow(2.0, currentBitLength)) { // increase bitlength if necessary
                     currentBitLength++;
                     System.out.println("bitlength changed to " + currentBitLength);
-                    bitCount.put(currentBitLength, 0);
                 }
                 pos = i;
             }
         }
-        compressed.add(dictionary.contains(text.substring(pos, text.length())));
+        addBitBlock(dictionary.contains(text.substring(pos, text.length())));
         if (dictionary.size() >= Math.pow(2, currentBitLength)) {
             currentBitLength++;
             System.out.println("bitlength changed to " + currentBitLength);
-            bitCount.put(currentBitLength, 0);
         }
-        bitCount.put(currentBitLength, bitCount.get(currentBitLength)+1); // log that an index was added to output of current bitlength
     }
     
+    private void addBitBlock(int code) {
+        String s = Integer.toBinaryString(code);
+        boolean[] binaryCode = new boolean[currentBitLength];
+
+        for (int i=currentBitLength-s.length(); i<currentBitLength ; i++) {
+            if (s.charAt(i-(currentBitLength-s.length())) == '1') binaryCode[i] = true;
+        }
+        LZWoutput.add(binaryCode);
+    }
+
     public void decompress() {
         
     }
     
     public void printCompressed() {
-        for (int i=0; i<compressed.size(); i++) {
-            System.out.print(compressed.get(i) + " ");
-            if (i%10 == 0) System.out.println();
+        for (int i=0; i<LZWoutput.size(); i++) {
+            for (int j=0; j<LZWoutput.get(i).length ; j++) {
+                String s = (LZWoutput.get(i)[j]) ? "1" : "0";
+                System.out.print(s);
+            }
+            System.out.print("  ");
+            if (i%8 == 0) System.out.println();
         }
         System.out.println();
     }
@@ -101,10 +107,8 @@ public class LZW {
 //        System.out.println("text.length: " + text.length());
         int UncompressedLength = text.length()*initialBitLength;
         int compressedLength = 0;
-//        System.out.println("bitcount size: " + bitCount.size());
-        for (int i : bitCount.keySet()) {
-            compressedLength += i*bitCount.get(i);
-//            System.out.println("Compressed output contains " + bitCount.get(i) + " codes of bit length " + i);
+        for (boolean[] b : LZWoutput) {
+            compressedLength += b.length;
         }
         
         System.out.println("Uncompressed bit-length: " + UncompressedLength);
