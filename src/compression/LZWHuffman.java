@@ -1,7 +1,6 @@
 package compression;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -11,16 +10,14 @@ public class LZWHuffman {
     HashSet<Character> alphabet;
     private BiDirectionalMap dictionary; // the dictionary used for compression
     private BiDirectionalMap decodeDictionary;
-//    private ArrayList<Integer> compressed; //the output of the compression algorithm
     private ArrayList<boolean[]> LZWoutput;
-    private int currentBitLength;
+    private int currentBlockSize;
     private int initialBitLength;
     private int dictionaryIndex;
     
     public LZWHuffman(char[] chars, HashSet<Character> alphabet, int alph_size) {
         this.alphabet = alphabet;
         dictionary = new BiDirectionalMap();
-//        compressed = new ArrayList<>();
         LZWoutput = new ArrayList<boolean[]>();
         
         StringBuilder sb = new StringBuilder();
@@ -30,7 +27,7 @@ public class LZWHuffman {
             System.out.println("adding character '" + c + "' to dictionary at index " + dictionaryIndex);
             dictionary.put(dictionaryIndex++, Character.toString(c));
         }
-        currentBitLength = findInitialBitLength();
+        currentBlockSize = findInitialBitLength();
         
         for (int i=0; i<chars.length; i++) {
             if (alphabet.contains(chars[i])) sb.append(chars[i]);
@@ -43,7 +40,6 @@ public class LZWHuffman {
         this.alphabet = alphabet;
         this.text = source;
         dictionary = new BiDirectionalMap();
-//        compressed = new ArrayList<>();
         LZWoutput = new ArrayList<boolean[]>();
         
         dictionaryIndex=0;
@@ -51,7 +47,7 @@ public class LZWHuffman {
             System.out.println("adding character '" + c + "' to dictionary at index " + dictionaryIndex);
             dictionary.put(dictionaryIndex++, Character.toString(c));
         }
-        currentBitLength = findInitialBitLength();
+        currentBlockSize = findInitialBitLength();
     }
     
     public void compress() {
@@ -59,28 +55,28 @@ public class LZWHuffman {
         
         for (int i=1; i<text.length(); i++) {
             if (dictionary.contains(text.substring(pos, i+1)) == null) { //if current sequence + char at i is not in dictionary
-                addBitBlock(dictionary.contains(text.substring(pos, i))); //output current sequence's index
+                addBitBlock(dictionary.contains(text.substring(pos, i))); //output current sequence's index as a block of bits (block length = currentBlockSize)
                 dictionary.put(dictionaryIndex++, text.substring(pos, i+1)); //add current sequence + char to dictionary
-                if (dictionary.size() > Math.pow(2.0, currentBitLength)) { // increase bitlength if necessary
-                    currentBitLength++;
-                    System.out.println("bitlength changed to " + currentBitLength);
+                if (dictionary.size() > Math.pow(2.0, currentBlockSize)) { // increase bitlength if necessary
+                    currentBlockSize++;
+                    System.out.println("Block size changed to " + currentBlockSize);
                 }
                 pos = i;
             }
         }
         addBitBlock(dictionary.contains(text.substring(pos, text.length())));
-        if (dictionary.size() >= Math.pow(2, currentBitLength)) {
-            currentBitLength++;
-            System.out.println("bitlength changed to " + currentBitLength);
+        if (dictionary.size() >= Math.pow(2, currentBlockSize)) {
+            currentBlockSize++;
+            System.out.println("Block size changed to " + currentBlockSize);
         }
     }
     
     private void addBitBlock(int code) {
         String s = Integer.toBinaryString(code);
-        boolean[] binaryCode = new boolean[currentBitLength];
+        boolean[] binaryCode = new boolean[currentBlockSize];
 
-        for (int i=currentBitLength-s.length(); i<currentBitLength ; i++) {
-            if (s.charAt(i-(currentBitLength-s.length())) == '1') binaryCode[i] = true;
+        for (int i=currentBlockSize-s.length(); i<currentBlockSize ; i++) {
+            if (s.charAt(i-(currentBlockSize-s.length())) == '1') binaryCode[i] = true;
         }
         LZWoutput.add(binaryCode);
     }
@@ -102,9 +98,7 @@ public class LZWHuffman {
     }
     
     public void printCompressionRatio() {
-//        System.out.println("initial bit length: " + initialBitLength);
-//        System.out.println("current bit length: " + currentBitLength);
-//        System.out.println("text.length: " + text.length());
+        System.out.println("Dictionary size after compression: " + dictionary.size());
         int UncompressedLength = text.length()*initialBitLength;
         int compressedLength = 0;
         for (boolean[] b : LZWoutput) {

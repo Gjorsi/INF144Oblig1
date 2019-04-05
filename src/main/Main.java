@@ -46,6 +46,13 @@ public class Main {
             e.printStackTrace();    
         }
         
+//        LZW lzw = new LZW(sourceText, alphabet, DICT_SIZE);
+        LZWHuffman lzw = new LZWHuffman(sourceText, alphabet, DICT_SIZE);
+//        LZW lzw = new LZW("tobeornottobeortobeornot#", alphabet, DICT_SIZE);
+        lzw.compress();
+//        lzw.printCompressed();
+        lzw.printCompressionRatio();
+        
 //        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 //        
 //        bw.write(sourceText, 0, sourceText.length);
@@ -53,13 +60,6 @@ public class Main {
 //        bw.close();
 //        m.entropy0();
 //        m.entropy1();
-        
-//        LZW lzw = new LZW(sourceText, alphabet, DICT_SIZE);
-        LZWHuffman lzw = new LZWHuffman(sourceText, alphabet, DICT_SIZE);
-//        LZW lzw = new LZW("tobeornottobeortobeornot#", alphabet, DICT_SIZE);
-        lzw.compress();
-        lzw.printCompressed();
-        lzw.printCompressionRatio();
         
 //        while(true) {
 //            System.out.println("q = quit\n" 
