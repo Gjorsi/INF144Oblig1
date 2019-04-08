@@ -30,7 +30,7 @@ public class Main {
             alphabet.add(chars[i]);
         }
         
-//        Markov m = new Markov(f, chars, alphabet, 30);
+        Markov m = new Markov(f, chars, alphabet, 30);
         
         BufferedReader br;
         try {
@@ -43,15 +43,19 @@ public class Main {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();    
+            e.printStackTrace();
         }
         
+        String s = m.generateOrder(500, 3);
+        System.out.println(s);
+        
 //        LZW lzw = new LZW(sourceText, alphabet, DICT_SIZE);
-        LZWHuffman lzw = new LZWHuffman(sourceText, alphabet, DICT_SIZE);
+        LZWHuffman lzw = new LZWHuffman(s, alphabet, DICT_SIZE);
 //        LZW lzw = new LZW("tobeornottobeortobeornot#", alphabet, DICT_SIZE);
         lzw.compress();
 //        lzw.printCompressed();
         lzw.printCompressionRatio();
+//        System.out.println(lzw.toString());
         
 //        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 //        

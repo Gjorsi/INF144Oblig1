@@ -171,7 +171,7 @@ public class Markov {
         }
     }
     
-    public void generateOrder0(int length) {
+    public String generateOrder0(int length) {
         analyzeOrder0();
         Double random, sum = 0.0;
         int x;
@@ -189,7 +189,7 @@ public class Markov {
             sb.append(chars[x-1]);
         }
         
-        System.out.println(sb.toString());
+        return sb.toString();
     }
     
     private void analyzeOrder(int order) {
@@ -214,10 +214,9 @@ public class Markov {
 
     
     
-    public void generateOrder(int length, int order) {
+    public String generateOrder(int length, int order) {
         if (order == 0) {
-            generateOrder0(length);
-            return;
+            return generateOrder0(length);
         }
         
         analyzeOrder0();
@@ -246,6 +245,6 @@ public class Markov {
             sb.append(trMatrix.getRandomized(sb.substring(sb.length()-order)));
         }
         
-        System.out.println(sb.toString());
+        return sb.toString();
     }
 }

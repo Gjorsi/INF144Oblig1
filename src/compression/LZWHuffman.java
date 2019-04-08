@@ -18,6 +18,7 @@ public class LZWHuffman {
     public LZWHuffman(char[] chars, HashSet<Character> alphabet, int alph_size) {
         this.alphabet = alphabet;
         dictionary = new BiDirectionalMap();
+        decodeDictionary = new BiDirectionalMap();
         LZWoutput = new ArrayList<boolean[]>();
         
         StringBuilder sb = new StringBuilder();
@@ -25,6 +26,7 @@ public class LZWHuffman {
         dictionaryIndex=0;
         for (char c : alphabet) {
             System.out.println("adding character '" + c + "' to dictionary at index " + dictionaryIndex);
+            decodeDictionary.put(dictionaryIndex, Character.toString(c));
             dictionary.put(dictionaryIndex++, Character.toString(c));
         }
         currentBlockSize = findInitialBitLength();
@@ -40,11 +42,13 @@ public class LZWHuffman {
         this.alphabet = alphabet;
         this.text = source;
         dictionary = new BiDirectionalMap();
+        decodeDictionary = new BiDirectionalMap();
         LZWoutput = new ArrayList<boolean[]>();
         
         dictionaryIndex=0;
         for (char c : alphabet) {
             System.out.println("adding character '" + c + "' to dictionary at index " + dictionaryIndex);
+            decodeDictionary.put(dictionaryIndex, Character.toString(c));
             dictionary.put(dictionaryIndex++, Character.toString(c));
         }
         currentBlockSize = findInitialBitLength();
@@ -80,8 +84,27 @@ public class LZWHuffman {
         }
         LZWoutput.add(binaryCode);
     }
+    
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        String s;
+        boolean[] block;
+        for (int i=0; i<LZWoutput.size(); i++) {
+            block = LZWoutput.get(i);
+            s = "";
+            for (int j=0; j<block.length; j++) {
+                s += (block[j]) ? "1" : "0";
+            }
+            
+            sb.append(decodeDictionary.get(Integer.parseInt(s, 2)));
+        }
+        
+        return sb.toString();
+    }
 
-    public void decompress() {
+    public void decompress(String coded) {
+        StringBuilder sb = new StringBuilder();
+        
         
     }
     
