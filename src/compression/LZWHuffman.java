@@ -12,7 +12,7 @@ public class LZWHuffman {
     private BiDirectionalMap decodeDictionary;
     private ArrayList<boolean[]> LZWoutput;
     private int currentBlockSize;
-    private int initialBitLength;
+    private int initialBlockSize;
     private int dictionaryIndex;
     
     public LZWHuffman(char[] chars, HashSet<Character> alphabet, int alph_size) {
@@ -96,16 +96,38 @@ public class LZWHuffman {
                 s += (block[j]) ? "1" : "0";
             }
             
-            sb.append(decodeDictionary.get(Integer.parseInt(s, 2)));
+            sb.append(s);
         }
         
         return sb.toString();
     }
 
-    public void decompress(String coded) {
+    public String decompress(String coded) {
+        currentBlockSize = initialBlockSize;
         StringBuilder sb = new StringBuilder();
+        String block = decodeDictionary.get(Integer.parseInt(coded.substring(0, currentBlockSize), 2));
+        sb.append(block);
+        String parse, temp;
+        int dictIndex;
+        int maxDictIndex = alphabet.size();
+        for (int i=currentBlockSize; i<coded.length()-currentBlockSize; i+=currentBlockSize) {
+            temp = coded.substring(i, i+currentBlockSize);
+            dictIndex = Integer.parseInt(temp, 2);
+            if (decodeDictionary.containsKey(dictIndex)) {
+                parse = decodeDictionary.get(dictIndex);
+            } else if (dictIndex == maxDictIndex) {
+                parse = block + block.charAt(0);
+            } else {
+                throw new IllegalStateException("Could not decode: " + dictIndex);
+            }
+            
+            sb.append(parse);
+            decodeDictionary.put(maxDictIndex++, block + parse.charAt(0));
+            if (maxDictIndex > Math.pow(2, currentBlockSize)) currentBlockSize++;
+            block = parse;
+        }
         
-        
+        return sb.toString();
     }
     
     public void printCompressed() {
@@ -122,7 +144,7 @@ public class LZWHuffman {
     
     public void printCompressionRatio() {
         System.out.println("Dictionary size after compression: " + dictionary.size());
-        int UncompressedLength = text.length()*initialBitLength;
+        int UncompressedLength = text.length()*initialBlockSize;
         int compressedLength = 0;
         for (boolean[] b : LZWoutput) {
             compressedLength += b.length;
@@ -137,9 +159,9 @@ public class LZWHuffman {
     }
     
     private int findInitialBitLength() {
-        initialBitLength = 1;
-        while (alphabet.size() > Math.pow(initialBitLength, 2)) initialBitLength++;
-        return --initialBitLength;
+        initialBlockSize = 1;
+        while (alphabet.size() > Math.pow(initialBlockSize, 2)) initialBlockSize++;
+        return --initialBlockSize;
     }
     
     private class BiDirectionalMap {
@@ -158,6 +180,10 @@ public class LZWHuffman {
         
         public Integer contains(String s) {
             return stringToInt.get(s);
+        }
+        
+        public boolean containsKey(int i) {
+            return intToString.containsKey(i);
         }
         
         public String get(int i) {

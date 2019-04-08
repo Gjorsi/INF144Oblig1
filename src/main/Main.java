@@ -46,7 +46,7 @@ public class Main {
             e.printStackTrace();
         }
         
-        String s = m.generateOrder(500, 3);
+        String s = m.generateOrder(300, 3);
         System.out.println(s);
         
 //        LZW lzw = new LZW(sourceText, alphabet, DICT_SIZE);
@@ -55,7 +55,7 @@ public class Main {
         lzw.compress();
 //        lzw.printCompressed();
         lzw.printCompressionRatio();
-//        System.out.println(lzw.toString());
+        System.out.println(lzw.decompress(lzw.toString()));
         
 //        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 //        
