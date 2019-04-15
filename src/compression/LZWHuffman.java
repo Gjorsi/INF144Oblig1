@@ -101,6 +101,23 @@ public class LZWHuffman {
         
         return sb.toString();
     }
+    
+    public ArrayList<String> toStringBlocks() {
+        ArrayList<String> stringBlocks = new ArrayList<String>();
+        String s;
+        boolean[] block;
+        for (int i=0; i<LZWoutput.size(); i++) {
+            block = LZWoutput.get(i);
+            s = "";
+            for (int j=0; j<block.length; j++) {
+                s += (block[j]) ? "1" : "0";
+            }
+            stringBlocks.add(s);
+            
+        }
+        
+        return stringBlocks;
+    }
 
     public String decompress(String coded) {
         currentBlockSize = initialBlockSize;
