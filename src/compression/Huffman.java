@@ -48,6 +48,13 @@ public class Huffman {
             }
         }
     }
+    
+    public void printFreqs() {
+        System.out.println("Frequency of blocks:");
+        for(String s : freqs.keySet()) {
+            System.out.println(s + ": " + freqs.get(s));
+        }
+    }
 
     private class Node implements Comparable<Node> {
 

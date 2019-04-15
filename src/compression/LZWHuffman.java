@@ -47,7 +47,7 @@ public class LZWHuffman {
         
         dictionaryIndex=0;
         for (char c : alphabet) {
-            System.out.println("adding character '" + c + "' to dictionary at index " + dictionaryIndex);
+//            System.out.println("adding character '" + c + "' to dictionary at index " + dictionaryIndex);
             decodeDictionary.put(dictionaryIndex, Character.toString(c));
             dictionary.put(dictionaryIndex++, Character.toString(c));
         }
