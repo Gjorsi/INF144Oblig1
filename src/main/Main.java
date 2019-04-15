@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
 
+import compression.Huffman;
 import compression.LZW;
 import compression.LZWHuffman;
 import markovModel.Markov;
@@ -46,7 +47,7 @@ public class Main {
             e.printStackTrace();
         }
         
-        String s = m.generateOrder(300, 3);
+        String s = m.generateOrder(50, 3);
         System.out.println(s);
         
 //        LZW lzw = new LZW(sourceText, alphabet, DICT_SIZE);
@@ -56,6 +57,10 @@ public class Main {
 //        lzw.printCompressed();
         lzw.printCompressionRatio();
         System.out.println(lzw.decompress(lzw.toString()));
+        
+        Huffman hm = new Huffman(lzw.toStringBlocks());
+        hm.encode();
+        hm.printCompressionRatio();
         
 //        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 //        
