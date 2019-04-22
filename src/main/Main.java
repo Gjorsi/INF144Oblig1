@@ -56,9 +56,7 @@ public class Main {
         lzw.compress();
 //        lzw.printCompressed();
         lzw.printCompressionRatio();
-        lzw.printCodeDictionary();
         System.out.println(lzw.decompress(lzw.toString()));
-        lzw.printDecodeDictionary();
         
         Huffman hm = new Huffman(lzw.toStringBlocks());
         hm.encode();
