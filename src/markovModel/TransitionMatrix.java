@@ -50,6 +50,11 @@ public class TransitionMatrix {
      * @return the generated character
      */
     public char getRandomized(String prefix) {
+        try {
+            int temp = matrix.get(prefix).freqTotal;
+        } catch (NullPointerException e) {
+            System.out.println("Could not find frequency total of prefix '" + prefix + "'" );
+        }
         int random = r.nextInt(matrix.get(prefix).freqTotal); //a random number limited by the total of occurrences of given prefix
         int sum = 0;
         

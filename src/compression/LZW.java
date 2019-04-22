@@ -186,20 +186,21 @@ public class LZW {
     }
     
     
-    public void printCompressionRatio() {
-        System.out.println("Dictionary size after compression: " + dictionary.size());
-        int UncompressedLength = text.length()*initialBlockSize;
+    public int printCompressionRatio() {
+//        System.out.println("Dictionary size after compression: " + dictionary.size());
+        int uncompressedLength = text.length()*initialBlockSize;
         int compressedLength = 0;
         for (boolean[] b : LZWoutput) {
             compressedLength += b.length;
         }
         
-        System.out.println("Uncompressed bit-length: " + UncompressedLength);
-        System.out.println("Compressed bit-length: " + compressedLength);
+        System.out.println("Uncompressed bit-length: " + uncompressedLength);
+        System.out.println("LZW-Compressed bit-length: " + compressedLength);
         
-        double rate = (double)compressedLength / UncompressedLength;
+        double rate = (double)compressedLength / uncompressedLength;
         rate = 1-rate;
-        System.out.printf("Compression rate: %.2f%%\n", rate*100);
+        System.out.printf("LZW compression rate: %.2f%%\n", rate*100);
+        return uncompressedLength;
     }
     
     public void printCodeDictionary() {

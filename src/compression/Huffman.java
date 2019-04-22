@@ -12,9 +12,13 @@ public class Huffman {
     private ArrayList<String> compressed;
     private BiDirectionalMap<String, String> codeMap;
     
+// --------- Constructors ---------
+    
     public Huffman(ArrayList<String> input) {
         this.source = input;
     }
+    
+ // --------- Encoding ---------
     
     public void encode() {
         createHuffmanTree();
@@ -23,33 +27,22 @@ public class Huffman {
         compressed = new ArrayList<String>();
         code();
     }
-
-    public void printCodeMap() {
-        for(String s : codeMap.getESet()) {
-            System.out.println(s + " codes to: " + codeMap.getV(s));
-        }
-    }
-
-    private void createCodeMap() {
-        codeMap = new BiDirectionalMap<>();
-        searchTree(root, "");
-    }
-
-    private void searchTree(Node n, String code) {
-        if (n.left == null && n.right == null) {
-            codeMap.put(n.block, code);
-        } else {
-            searchTree(n.left, code + "0");
-            searchTree(n.right, code + "1");
-        }
-    }
-
+    
     private void code() {
         for(String s : source) {
             compressed.add(codeMap.getV(s)); //add codeword for s to the compressed output
         }
     }
 
+    
+ // --------- Decoding ---------
+    
+    public void decode() {
+        
+    }
+    
+ // --------- Helper-methods ---------
+    
     private void createHuffmanTree() {
         findFrequencies();
         PriorityQueue<Node> queue = new PriorityQueue<>();
@@ -67,13 +60,7 @@ public class Huffman {
             queue.add(parent);
         }
     }
-
-    private void addInitialNodes(PriorityQueue<Node> queue) {
-        for(String block : freqs.keySet()) {
-            queue.add(new Node(freqs.get(block), block));
-        }
-    }
-
+    
     private void findFrequencies() {
         freqs = new HashMap<String, Integer>();
         for (String s : source) {
@@ -85,13 +72,60 @@ public class Huffman {
         }
     }
     
+    private void addInitialNodes(PriorityQueue<Node> queue) {
+        for(String block : freqs.keySet()) {
+            queue.add(new Node(freqs.get(block), block));
+        }
+    }
+    
+    private void createCodeMap() {
+        codeMap = new BiDirectionalMap<>();
+        searchTree(root, "");
+    }
+
+    private void searchTree(Node n, String code) {
+        if (n.left == null && n.right == null) {
+            codeMap.put(n.block, code);
+        } else {
+            searchTree(n.left, code + "0");
+            searchTree(n.right, code + "1");
+        }
+    }
+    
+    
+// --------- Printer-methods ---------
+    
+    public void printCodeMap() {
+        for(String s : codeMap.getESet()) {
+            System.out.println(s + " codes to: " + codeMap.getV(s));
+        }
+    }
+    
     public void printFreqs() {
         System.out.println("Frequency of blocks:");
         for(String s : freqs.keySet()) {
             System.out.println(s + ": " + freqs.get(s));
         }
     }
-
+    
+    public int printCompressionRatio() {
+        int sourceLength = 0, compressedLength = 0;
+        for(String s : source) {
+            sourceLength += s.length();
+        }
+        for(String s : compressed) {
+            compressedLength += s.length();
+        }
+        
+        System.out.println("Bit-length before huffman-coding: " + sourceLength);
+        System.out.println("Bit-length after huffman-coding: " + compressedLength);
+        System.out.printf("Huffman-coding compression ratio: %.2f%%\n", (1.0-(double)compressedLength/sourceLength)*100);
+        return compressedLength;
+    }
+    
+    
+ // --------- Node class ---------
+    
     private class Node implements Comparable<Node> {
 
         int freq;
@@ -114,19 +148,4 @@ public class Huffman {
         }
         
     }
-
-    public void printCompressionRatio() {
-        int sourceLength = 0, compressedLength = 0;
-        for(String s : source) {
-            sourceLength += s.length();
-        }
-        for(String s : compressed) {
-            compressedLength += s.length();
-        }
-        
-        System.out.println("Bit-length before huffman-coding: " + sourceLength);
-        System.out.println("Bit-length after huffman-coding: " + compressedLength);
-        System.out.printf("Huffman-coding compression ratio: %.2f%%\n", (1.0-(double)compressedLength/sourceLength)*100);
-    }
-    
 }

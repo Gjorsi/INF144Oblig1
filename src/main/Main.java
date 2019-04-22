@@ -23,7 +23,6 @@ public class Main {
     private static char[] sourceText;
     
     public static void main(String[] args) throws IOException {
-        File f = new File("Folktale.html");
         sourceText = new char[9000];
         
         alphabet = new HashSet<Character>();
@@ -31,36 +30,23 @@ public class Main {
             alphabet.add(chars[i]);
         }
         
-        Markov m = new Markov(f, chars, alphabet, 30);
+        readFile();
         
-        BufferedReader br;
-        try {
-            br = new BufferedReader(new FileReader(f));
-            int x = 0;
-            while(br.ready()) 
-                sourceText[x++] = ((char)br.read());
-            
-            br.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Markov m = new Markov(sourceText, chars, alphabet, 30);
         
-        String s = m.generateOrder(50, 3);
+        String s = m.generateOrder(8000, 3);
         System.out.println(s);
         
-//        LZW lzw = new LZW(sourceText, alphabet, DICT_SIZE);
         LZW lzw = new LZW(s, alphabet, DICT_SIZE);
-//        LZW lzw = new LZW("tobeornottobeortobeornot#", alphabet, DICT_SIZE);
         lzw.compress();
-//        lzw.printCompressed();
-        lzw.printCompressionRatio();
-        System.out.println(lzw.decompress(lzw.toString()));
+        int initialBitLength = lzw.printCompressionRatio();
+//        System.out.println(lzw.decompress(lzw.toString()));
         
         Huffman hm = new Huffman(lzw.toStringBlocks());
         hm.encode();
-        hm.printCompressionRatio();
+        int finalBitLength = hm.printCompressionRatio();
+        
+        printTotalCompression(initialBitLength, finalBitLength);
         
 //        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 //        
@@ -91,6 +77,33 @@ public class Main {
 //            m.generateOrder(length, order);
 //        }
         
+    }
+
+    private static void readFile() {
+        File f = new File("Folktale.html");
+        BufferedReader br;
+        String s = "";
+        try {
+            br = new BufferedReader(new FileReader(f));
+            while(br.ready()) {
+                s = br.readLine();
+                if (alphabet.contains(s.charAt(s.length()-1))) {
+                    sourceText = s.toLowerCase().toCharArray();
+                    break;
+                }
+            }
+            br.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void printTotalCompression(int initialBitLength, int finalBitLength) {
+        double totalCompressionRatio = (1.0-(double)finalBitLength/initialBitLength)*100;
+        System.out.printf("Final compression rate from initial bit-length of %d to final bit-length of %d:\n"
+                + "%.2f%%", initialBitLength, finalBitLength, totalCompressionRatio);
     }
 
 }

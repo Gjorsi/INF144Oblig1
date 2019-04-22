@@ -15,35 +15,36 @@ public class Markov {
     private HashMap<Character, Integer> charPos = new HashMap<>();
     private char[] chars;
     private HashSet<Character> alphabet;
-    private Character[] sourceText = new Character[10000];
+    private char[] sourceText = new char[9000];
     private double[] matrix0;
     private Random r;
     private TransitionMatrix trMatrix;
     
-    public Markov(File source, char[] chars, HashSet<Character> alphabet, int dict_size) {
+    public Markov(char[] source, char[] chars, HashSet<Character> alphabet, int dict_size) {
         this.chars = chars;
         this.alphabet = alphabet;
         this.DICT_SIZE = dict_size;
+        this.sourceText = source;
         //read file into character array sourceText
-        BufferedReader br;
-        try {
-            br = new BufferedReader(new FileReader(source));
-            int x = 0;
-            while(br.ready()) 
-                sourceText[x++] = ((char)br.read());
-            
-            br.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        BufferedReader br;
+//        try {
+//            br = new BufferedReader(new FileReader(source));
+//            int x = 0;
+//            while(br.ready()) 
+//                sourceText[x++] = ((char)br.read());
+//            
+//            br.close();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         
         //Initialise
         r = new Random();
         alphabet = new HashSet<Character>();
         for (int i=0; i<DICT_SIZE; i++) {
-            charPos.put(chars[i], i); 
+            charPos.put(chars[i], i);
             alphabet.add(chars[i]);
         }
         matrix0 = new double[DICT_SIZE];
