@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.util.HashSet;
 
 import compression.Huffman;
+import compression.LZWold;
 import compression.LZW;
-import compression.LZWHuffman;
 import markovModel.Markov;
 
 public class Main {
@@ -51,12 +51,14 @@ public class Main {
         System.out.println(s);
         
 //        LZW lzw = new LZW(sourceText, alphabet, DICT_SIZE);
-        LZWHuffman lzw = new LZWHuffman(s, alphabet, DICT_SIZE);
+        LZW lzw = new LZW(s, alphabet, DICT_SIZE);
 //        LZW lzw = new LZW("tobeornottobeortobeornot#", alphabet, DICT_SIZE);
         lzw.compress();
 //        lzw.printCompressed();
         lzw.printCompressionRatio();
+        lzw.printCodeDictionary();
         System.out.println(lzw.decompress(lzw.toString()));
+        lzw.printDecodeDictionary();
         
         Huffman hm = new Huffman(lzw.toStringBlocks());
         hm.encode();
