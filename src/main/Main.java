@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.HashSet;
 
 import compression.Huffman;
-import compression.LZWold;
 import compression.LZW;
 import markovModel.Markov;
 
@@ -34,16 +33,16 @@ public class Main {
         
         Markov m = new Markov(sourceText, chars, alphabet, 30);
         
-        String s = m.generateOrder(8000, 3);
+        String s = m.generateOrder(100, 3);
         System.out.println(s);
         
         LZW lzw = new LZW(s, alphabet, DICT_SIZE);
         lzw.compress();
         int initialBitLength = lzw.printCompressionRatio();
-//        System.out.println(lzw.decompress(lzw.toString()));
         
         Huffman hm = new Huffman(lzw.toStringBlocks());
         hm.encode();
+        System.out.println(lzw.decompress(hm.decode()));
         int finalBitLength = hm.printCompressionRatio();
         
         printTotalCompression(initialBitLength, finalBitLength);

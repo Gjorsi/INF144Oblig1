@@ -37,8 +37,12 @@ public class Huffman {
     
  // --------- Decoding ---------
     
-    public void decode() {
-        
+    public String decode() {
+        StringBuilder sb = new StringBuilder();
+        for(String s : compressed) {
+            sb.append(codeMap.getE(s));
+        }
+        return sb.toString();
     }
     
  // --------- Helper-methods ---------
