@@ -49,7 +49,8 @@ public class Main {
             try {
                 inputN = Integer.parseInt(input);
                 if (inputN == 1) compressFile();
-                if (inputN == 2) compressGenerated();
+                else if (inputN == 2) compressGenerated();
+                else System.out.println("Unable to parse input.");
             } catch (Exception e) {
                 System.out.println("Unable to parse input.");
             }
