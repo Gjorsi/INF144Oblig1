@@ -170,6 +170,23 @@ public class LZW {
         return stringBlocks;
     }
     
+    public int getInitialBitLength() {
+        return text.length()*initialBlockSize;
+    }
+    
+    public double getCompressionRatio() {
+      int uncompressedLength = text.length()*initialBlockSize;
+      int compressedLength = 0;
+      
+      for (boolean[] b : LZWoutput) {
+          compressedLength += b.length;
+      }
+      
+      double rate = (double)compressedLength / uncompressedLength;
+      rate = 1-rate;
+      return rate*100;
+  }
+    
     
     // -------- Printer-methods -----------
     

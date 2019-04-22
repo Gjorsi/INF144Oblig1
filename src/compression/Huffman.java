@@ -96,6 +96,26 @@ public class Huffman {
         }
     }
     
+    public int getCompressedLength() {
+        int compressedLength = 0;
+        for(String s : compressed) {
+            compressedLength += s.length();
+        }
+        return compressedLength;
+    }
+    
+    public double getCompressionRatio() {
+        int sourceLength = 0, compressedLength = 0;
+        for(String s : source) {
+            sourceLength += s.length();
+        }
+        for(String s : compressed) {
+            compressedLength += s.length();
+        }
+        
+        return (1.0-(double)compressedLength/sourceLength)*100;
+    }
+    
     
 // --------- Printer-methods ---------
     
