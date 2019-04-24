@@ -147,6 +147,14 @@ public class Huffman {
         return compressedLength;
     }
     
+    public void printCompressed() {
+        for (int i=0; i<compressed.size(); i++) {
+            System.out.print(compressed.get(i) + "   ");
+            
+            if (i % 8 == 0) System.out.println();
+        }
+        System.out.println();
+    }
     
  // --------- Node class ---------
     

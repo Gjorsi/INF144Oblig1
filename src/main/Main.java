@@ -39,7 +39,8 @@ public class Main {
         while(true) {
             System.out.println("\nEnter 'Q' to quit.\n"
                     + "Enter '1' to run compression on 'Folktale.html'.\n"
-                    + "Enter '2' to run compression on 100 randomly generated texts (of markov order 0-3).\n");
+                    + "Enter '2' to run compression on 100 randomly generated texts (of markov order 0-3).\n"
+                    + "Enter '3' to generate a text, print it, compress, analyse, decompress and print.\n");
             String input = sc.nextLine();
             if (input.equals("Q")) {
                 sc.close();
@@ -50,6 +51,7 @@ public class Main {
                 inputN = Integer.parseInt(input);
                 if (inputN == 1) compressFile();
                 else if (inputN == 2) compressGenerated();
+                else if (inputN == 3) compressDecompress();
                 else System.out.println("Unable to parse input.");
             } catch (Exception e) {
                 System.out.println("Unable to parse input.");
@@ -90,6 +92,30 @@ public class Main {
             }
             System.out.println("Average compression rate for order " + i + " is " + average(compressionResults));
         }
+    }
+    
+    private static void compressDecompress() {
+        m = new Markov(sourceText, chars, alphabet, 30);
+        String s = m.generateOrder(200, 5);
+        System.out.println("Generated text:\n" + s + "\n");
+        LZW lzw = new LZW(s, alphabet, DICT_SIZE);
+        
+        lzw.compress();
+        int initialBitLength = lzw.printCompressionRatio();
+        
+        Huffman hm = new Huffman(lzw.toStringBlocks());
+        hm.encode();
+        
+        int finalBitLength = hm.printCompressionRatio();
+        
+        printTotalCompression(initialBitLength, finalBitLength);
+        
+        System.out.println("Compressed result:");
+        hm.printCompressed();
+        
+        System.out.println("Decompressed:");
+        System.out.println(lzw.decompress(hm.decode()));
+        
     }
 
     private static String average(double[] compressionResults) {

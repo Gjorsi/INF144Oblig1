@@ -75,10 +75,6 @@ public class LZW {
             }
         }
         addBitBlock(dictionary.getE(text.substring(pos, text.length())));
-        if (dictionary.size() >= Math.pow(2, currentBlockSize)) {
-            currentBlockSize++;
-//            System.out.println("Block size changed to " + currentBlockSize);
-        }
     }
     
     
