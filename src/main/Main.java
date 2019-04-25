@@ -66,7 +66,6 @@ public class Main {
         
         Huffman hm = new Huffman(lzw.toStringBlocks());
         hm.encode();
-        System.out.println(lzw.decompress(hm.decode()));
         int finalBitLength = hm.printCompressionRatio();
         
         printTotalCompression(initialBitLength, finalBitLength);
@@ -77,20 +76,23 @@ public class Main {
         
         m = new Markov(sourceText, chars, alphabet, 30);
         int initialBitLength, finalBitLength;
-        double[] compressionResults = new double[100];
         
         for (int i=0; i<4; i++) {
+            double totalComp = 0.0;
+            double LZWComp = 0.0;
             for (int j=0; j<100; j++) {
                 String s = m.generateOrder(8000, i);
                 LZW lzw = new LZW(s, alphabet, DICT_SIZE);
                 lzw.compress();
                 initialBitLength = lzw.getInitialBitLength();
+                LZWComp += lzw.getCompressionRatio();
                 Huffman hm = new Huffman(lzw.toStringBlocks());
                 hm.encode();
                 finalBitLength = hm.getCompressedLength();
-                compressionResults[j] = getTotalCompression(initialBitLength, finalBitLength);
+                totalComp += getTotalCompression(initialBitLength, finalBitLength);
             }
-            System.out.println("Average compression rate for order " + i + " is " + average(compressionResults));
+            System.out.printf("Average LZW         compression rate for order %d is %.2f%%\n", i, LZWComp/100.0);
+            System.out.printf("Average LZW+Huffman compression rate for order %d is %.2f%%\n", i, totalComp/100.0);
         }
     }
     
