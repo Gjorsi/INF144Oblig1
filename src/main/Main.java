@@ -16,8 +16,7 @@ public class Main {
 
     private static char[] chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
             'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'æ', 'ø', 'å', ' '};
-//  private static char[] chars = {'#', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-//  'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+
     private static HashSet<Character> alphabet;
     private final static int DICT_SIZE = 30;
     private static char[] sourceText;
