@@ -1,10 +1,7 @@
 package compression;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-
-import jdk.internal.org.objectweb.asm.tree.IntInsnNode;
 
 public class LZW {
 

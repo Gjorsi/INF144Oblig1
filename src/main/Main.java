@@ -120,14 +120,6 @@ public class Main {
         
     }
 
-    private static String average(double[] compressionResults) {
-        double sum = 0.0;
-        for(double d : compressionResults) {
-            sum += d;
-        }
-        return String.format("%.2f%%", sum/100.0);
-    }
-
     private static void readFile() {
         File f = new File("Folktale.html");
         BufferedReader br;

@@ -52,21 +52,23 @@ public class TransitionMatrix {
     public char getRandomized(String prefix) {
         try {
             int temp = matrix.get(prefix).freqTotal;
+            int random = r.nextInt(temp); //a random number limited by the total of occurrences of given prefix
+            int sum = 0;
+            
+            for (Character c : matrix.get(prefix).freq.keySet()) {
+                sum += matrix.get(prefix).freq.get(c);
+                if (sum > random) {
+                    return c;
+                }
+            }
+            
+            throw new IllegalStateException("Couldnt find next char, this should not happen");
         } catch (NullPointerException e) {
             System.out.println("Could not find frequency total of prefix '" + prefix + "'" );
-        }
-        int random = r.nextInt(matrix.get(prefix).freqTotal); //a random number limited by the total of occurrences of given prefix
-        int sum = 0;
-        
-        for (Character c : matrix.get(prefix).freq.keySet()) {
-            sum += matrix.get(prefix).freq.get(c);
-            if (sum > random) {
-                return c;
-            }
+            e.printStackTrace();
         }
         
-        throw new IllegalStateException("Couldnt find next char, this should not happen");
-            
+        return 0;    
     }
     
     public HashSet<Character> getSuffixes (String prefix) {
